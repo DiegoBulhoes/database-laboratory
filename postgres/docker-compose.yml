@@ -1,0 +1,38 @@
+version: '3.7'
+services:
+  postgres:
+    build:
+      context: .
+      dockerfile: Dockerfile.postgres
+    image: postgres
+    container_name: postgres
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=passwordRoot
+    networks:
+      network-database:
+        ipv4_address: 173.20.0.2
+
+  pgAdmin4:
+    container_name: pgAdmin4
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: test@test.postgres.org
+      PGADMIN_DEFAULT_PASSWORD: passwordRoot
+    depends_on: 
+      - postgres
+    ports:
+      - 8081:80
+    networks:
+      network-database:
+        ipv4_address: 173.20.0.3
+
+networks:
+  network-database:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 173.20.0.0/24
