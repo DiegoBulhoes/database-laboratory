@@ -14,3 +14,6 @@ before_install:
 
 script:
   - docker-compose -f ./postgres/docker-compose.yml up -d
+  - docker-compose -f ./postgres/docker-compose.yml down
+  - docker-compose -f ./mysql/docker-compose.yml up -d
+  - docker-compose -f ./mysql/docker-compose.yml down
