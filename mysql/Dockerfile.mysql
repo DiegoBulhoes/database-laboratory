@@ -1,0 +1,3 @@
+FROM mysql
+COPY resources/dump.mysql.sql /docker-entrypoint-initdb.d/
+EXPOSE 3306
