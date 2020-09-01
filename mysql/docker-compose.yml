@@ -1,36 +1,38 @@
-version: '3.7'
+version: "3.7"
 services:
   db:
     build:
       context: .
       dockerfile: Dockerfile.mysql
-    image: mysql-database
     container_name: mysql-database
     command: --default-authentication-plugin=mysql_native_password
     ports:
-      - 3307:3306
+      - 3306:3306
     environment:
       MYSQL_USER: root
-      MYSQL_ROOT_PASSWORD: passwordRoot
+      MYSQL_ROOT_PASSWORD: mysql
+    volumes:
+      - "./mysql/bk:/bk"
+      - "./mysql/data:/var/lib/mysql/"
     networks:
-      network-database:
-        ipv4_address: 173.20.0.4
-  
+      net_mysql:
+        ipv4_address: 172.16.29.2
+
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
     container_name: phpmyadmin-interface
     ports:
-    - 8083:80
+      - 8080:80
     depends_on:
       - db
     networks:
-      network-database:
-        ipv4_address: 173.20.0.5
+      net_mysql:
+        ipv4_address: 172.16.29.3
 
 networks:
-  network-database:
+  net_mysql:
     driver: bridge
     ipam:
       driver: default
       config:
-        - subnet: 173.20.0.0/24
+        - subnet: 172.16.29.0/24
