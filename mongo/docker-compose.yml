@@ -1,0 +1,46 @@
+version: '3.7'
+services:
+  mongo:
+    build:
+      context: .
+      dockerfile: Dockerfile.mongo
+    container_name: mongo-database
+    ports:
+      - 27017:27017
+    volumes:
+      - "./mongo/bk:/bk"
+      - "./mongo/data:/data/db"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: mongo
+    networks:
+      net_mongo:
+        ipv4_address: 172.16.18.2
+
+  mongo-express:
+    image: mongo-express
+    container_name: mongo-express-interface
+    restart: on-failure
+    ports:
+      - 8080:8080
+    environment:
+      VCAP_APP_PORT: 8080
+      ME_CONFIG_MONGODB_ADMINUSERNAME: root
+      ME_CONFIG_MONGODB_ADMINPASSWORD: mongo
+      ME_CONFIG_MONGODB_ENABLE_ADMIN: "true"
+      ME_CONFIG_OPTIONS_EDITORTHEME: ambiance
+      ME_CONFIG_MONGODB_SERVER: 172.16.18.2
+      ME_CONFIG_MONGODB_PORT: 27017
+    depends_on:
+      - mongo
+    networks:
+      net_mongo:
+        ipv4_address: 172.16.18.3
+
+networks:
+  net_mongo:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.16.18.0/24
